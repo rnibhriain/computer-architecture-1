@@ -1,0 +1,61 @@
+Code explanation:
+
+
+Processor:
+There is a flag_reset in this which resets the flags from the datapath if the reset signals are set.
+The datapath performs all the operations necessary in the program. 
+This uses all the values from the microprogrammed control to pick from the memory m and set the flags correctly.
+The addresses and the opcode from memory m are set into the microprogrammed control and this controls the processor.
+
+
+Microprogrammed_control:
+The control memory is a component here and this sets all the signals which activate the datapath and outputs those to the processor.
+It also contains the signals for the various muxes and counters.
+The extend takes two five bit values from the instruction register and adds zeros or ones and feeds it into the program counter.
+The program counter either adds one to the counter or adds the value from the extend, it can also be reset.
+This value will feed into the mux from Mux M which tells the memory which address to choose.
+Mux M chooses from a data address in the register file or the program counter.
+The instruction register takes a value from memory which will give it the opcode and the three addresses.
+The opcode from the IR feeds into the Mux C which chooses from the next address value in the control memory or the opcode.
+The value from this mux feeds into the car and the car resets the counter if the reset is set. 
+It also adds one to the counter if the value from Mux S is set as zero or as the input of next address or opcode if it is one. 
+Mux S outputs the value of either the flags or a 0 or 1 depending on the MS value. It is an 8 to 1 line Mux.
+
+
+Datapath:
+The datapath uses a register file to store values and a functional unit to perform operations of various kinds on values from the register file. 
+The datapath can load the register file with a value from the functional unit or from a loaded value from memory, this is decided through Mux D. 
+The datapath also enters either two values from registers or a constant value that is loaded. 
+There are 3 five bit addresses to a destination register and two other registers for output in the register file, they also use an extra set of bits to indicate the 32nd register. 
+There are 33 registers in the register file.
+Mux B decides whether the B value in the functional unit is a constant or a value from a register.
+This value from Mux B becomes bus B which can be data to be stored in memory. 
+This constant value comes from the zero fill which is the same as the B address.
+The functional unit performs either a shift on the second (B) value using the shifter or it uses the ALU to perform another operation. A multiplexer is used to distinguish between the two. 
+The ALU also takes a Cin value in the functional unit depending on a specific bit in the FS. 
+In the alu there is a carry-lookahead adder and a logic unit.
+The logic unit performs all the logical operations (and, or, xor, not). 
+The carry-lookahead adder performs all the adding using bit logic and outputs a sum, a carry and an overflow.
+A multiplexer decides which value is taken by taking a specific bit from the g_select.
+There is also logic to decide what value the B takes as sometimes it is not B or A - 1 so B is changed to x"FFFFFFFF".
+There are carry and overflow flags taken in this ripple adder. 
+I decided not to use a carry flag for the shifter to be consistent with the diagrams in the notes although this could easily be implemented. 
+The negative and zero flags are also done in the functional unit.
+I also included the ripple adder even though I use the cla instead.
+
+
+Results discussion:
+The results of all my test benches demonstrate that each individual entity is working.
+The processor shows that all the instructions of the memory are accessed.
+The microprogrammed control shows that instructions are working.
+The datapath shows that all the different operations can be done.
+All the code in the memory should perform the different operations.
+
+
+Fetch-Decode-Execute cycle:
+The program counter contains the address of the next instruction in memory. 
+This address then gives the address from memory and the CAR gets the instrucion for the signals in the control memory.
+These values are then decoded and sent to different parts of the processor.
+The instruction is executed and the values are changed. 
+The cycle then repeats.
+There are delays in the program to simulate this cycle.
