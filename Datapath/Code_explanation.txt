@@ -1,0 +1,15 @@
+The datapath uses a register file to store values and a functional unit to perform operations of various kinds on values from the register file. 
+The datapath can load the register file with a value from the functional unit or from a loaded value. 
+The datapath also enters either two values from registers or a constant value that is loaded. 
+The control word tells the program what to do and it is split into different register addresses, multiplexer signals and a 5 bit value that tells the functional unit what operation 
+to perform.
+The functional unit performs either a shift on the second (B) value using the shifter or it uses the ALU to perform another operation. A multiplexer is used to distinguish between the two. 
+The ALU also takes a Cin value in the functional unit depending on a specific bit in the FS. 
+In the alu there is a ripple adder and a logic unit.
+The logic unit performs all the logical operations (and, or, xor, not). 
+The ripple adder performs all the adding.
+A multiplexer decides which value is taken by taking a specific bit from the g_select.
+There is also logic to decide what value the B takes as sometimes it is not B or A - 1 so B is changed to x"FFFFFFFF".
+There are carry and overflow flags taken in this ripple adder. 
+I decided not to use a carry flag for the shifter to be consistent with the diagrams in the notes although this could easily be implemented. 
+The negative and zero flags are also done in the functional unit.
