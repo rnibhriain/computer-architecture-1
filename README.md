@@ -1,4 +1,4 @@
-# computer-architecture-1
+# Computer Architecture I
 
 All assignments for module: CSU22022
 - Part One: Register File
